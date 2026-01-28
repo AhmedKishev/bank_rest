@@ -18,27 +18,23 @@ import java.time.LocalDateTime;
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(schema = "users")
+@Table(name = "users")
 public class Card {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column(name = "card_number_encrypted", nullable = false)
-    String cardNumberEncrypted;
+    @Column(name = "card_number", nullable = false)
+    String cardNumber;
 
-    @Column(name = "card_number_masked", nullable = false)
-    String cardNumberMasked;
+    @Column(name = )
 
     @Column(name = "card_holder", nullable = false)
     String cardHolder;
 
     @Column(name = "expiry_date", nullable = false)
     LocalDate expiryDate;
-
-    @Column(name = "cvv_encrypted", nullable = false)
-    String cvvEncrypted;
 
     @Enumerated(EnumType.STRING)
     CardStatus status;
@@ -52,9 +48,6 @@ public class Card {
 
     @CreationTimestamp
     LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    LocalDateTime updatedAt;
 
     @PreUpdate
     @PrePersist

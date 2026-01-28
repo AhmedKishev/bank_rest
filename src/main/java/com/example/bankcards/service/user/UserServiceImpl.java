@@ -1,8 +1,9 @@
-package com.example.bankcards.service;
+package com.example.bankcards.service.user;
 
-import com.example.bankcards.dto.UserDtoIn;
-import com.example.bankcards.dto.UserDtoOut;
+import com.example.bankcards.dto.user.UserDtoIn;
+import com.example.bankcards.dto.user.UserDtoOut;
 import com.example.bankcards.entity.User;
+import com.example.bankcards.exception.UserNotFoundException;
 import com.example.bankcards.exception.UsernameAlreadyExistsException;
 import com.example.bankcards.mapper.UserMapper;
 import com.example.bankcards.repository.UserRepository;
@@ -31,6 +32,11 @@ public class UserServiceImpl implements UserService {
         return UserMapper.toUserDtoOut(saveUser);
     }
 
+    @Transactional(readOnly = true)
+    public User getEntityById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(String.format("Пользователя с Id %d не существует", userId)));
+    }
 
 
 }

@@ -1,7 +1,7 @@
 package com.example.bankcards.mapper;
 
-import com.example.bankcards.dto.UserDtoIn;
-import com.example.bankcards.dto.UserDtoOut;
+import com.example.bankcards.dto.user.UserDtoIn;
+import com.example.bankcards.dto.user.UserDtoOut;
 import com.example.bankcards.dto.enums.Role;
 import com.example.bankcards.entity.User;
 

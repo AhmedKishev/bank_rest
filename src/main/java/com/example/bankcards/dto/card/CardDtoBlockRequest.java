@@ -1,19 +1,20 @@
-package com.example.bankcards.dto;
+package com.example.bankcards.dto.card;
 
+
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
-@Builder
 @Getter
 @Setter
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserDtoOut {
+public class CardDtoBlockRequest {
 
-    String name;
-
-    String email;
+    @NotNull
+    String cardNumber;
 
 }

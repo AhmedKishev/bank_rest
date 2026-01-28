@@ -1,35 +1,46 @@
 package com.example.bankcards.controller;
 
 
-import com.example.bankcards.dto.CardDtoOut;
-import com.example.bankcards.dto.UserDtoIn;
-import com.example.bankcards.service.CardService;
+import com.example.bankcards.dto.card.CardDtoBlock;
+import com.example.bankcards.dto.card.CardDtoIn;
+import com.example.bankcards.dto.card.CardDtoOut;
+import com.example.bankcards.service.card.admin.AdminCardService;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController("/admin")
+@RestController
+@RequestMapping("/api/v1/admin")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 @Validated
 public class AdminController {
 
-    CardService cardService;
+    AdminCardService cardService;
 
-    @GetMapping("/get-all-cards")
+    @GetMapping("/cards")
     List<CardDtoOut> getAllCards() {
         return cardService.getAllCards();
     }
 
     @PatchMapping("/create")
-    public CardDtoOut createCardForUser(UserDtoIn userDtoIn) {
-        return cardService.createCardForUser(userDtoIn);
+    public CardDtoOut createCardForUser(@Valid @RequestBody CardDtoIn cardDtoIn) {
+        return cardService.createCardForUser(cardDtoIn);
+    }
+
+    @PatchMapping("/block")
+    public void blockCardForUsers() {
+        cardService.blockCardForUsers();
+    }
+
+    @PatchMapping("/remove")
+    public void removeCardForUser(@Valid @RequestBody CardDtoBlock cardDtoBlock) {
+        cardService.removeCardForUser(cardDtoBlock);
     }
 
 }

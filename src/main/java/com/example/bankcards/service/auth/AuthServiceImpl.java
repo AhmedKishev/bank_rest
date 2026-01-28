@@ -1,7 +1,7 @@
-package com.example.bankcards.service;
+package com.example.bankcards.service.auth;
 
-import com.example.bankcards.dto.JwtRequest;
-import com.example.bankcards.dto.JwtResponse;
+import com.example.bankcards.dto.jwt.JwtRequest;
+import com.example.bankcards.dto.jwt.JwtResponse;
 import com.example.bankcards.exception.AuthTokenNotValidException;
 import com.example.bankcards.mapper.JwtMapper;
 import com.example.bankcards.security.JwtService;

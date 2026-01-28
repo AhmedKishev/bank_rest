@@ -1,6 +1,6 @@
 package com.example.bankcards.mapper;
 
-import com.example.bankcards.dto.JwtResponse;
+import com.example.bankcards.dto.jwt.JwtResponse;
 
 public class JwtMapper {
 

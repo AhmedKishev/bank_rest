@@ -11,7 +11,8 @@ import java.util.Arrays;
 public class GlobalExceptionHandler {
 
 
-    @ExceptionHandler(UserNotFoundException.class)
+    @ExceptionHandler({UserNotFoundException.class,
+            CardNotFoundException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse notFoundException(final RuntimeException e) {
         return ErrorResponse.builder()
@@ -42,7 +43,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AuthTokenNotValidException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ErrorResponse authTokenNotValidException (final RuntimeException e) {
+    public ErrorResponse authTokenNotValidException(final RuntimeException e) {
         return ErrorResponse.builder()
                 .cause(e.getCause())
                 .stackTrace(Arrays.asList(e.getStackTrace()))

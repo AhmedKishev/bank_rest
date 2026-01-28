@@ -1,4 +1,4 @@
-package com.example.bankcards.dto;
+package com.example.bankcards.dto.jwt;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;

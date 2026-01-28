@@ -1,11 +1,11 @@
 package com.example.bankcards.controller;
 
-import com.example.bankcards.dto.JwtRequest;
-import com.example.bankcards.dto.JwtResponse;
-import com.example.bankcards.dto.UserDtoIn;
-import com.example.bankcards.dto.UserDtoOut;
-import com.example.bankcards.service.AuthService;
-import com.example.bankcards.service.UserService;
+import com.example.bankcards.dto.jwt.JwtRequest;
+import com.example.bankcards.dto.jwt.JwtResponse;
+import com.example.bankcards.dto.user.UserDtoIn;
+import com.example.bankcards.dto.user.UserDtoOut;
+import com.example.bankcards.service.auth.AuthService;
+import com.example.bankcards.service.user.UserService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
