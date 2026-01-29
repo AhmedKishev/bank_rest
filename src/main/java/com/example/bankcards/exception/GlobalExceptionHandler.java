@@ -26,7 +26,8 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
-    @ExceptionHandler(UsernameAlreadyExistsException.class)
+    @ExceptionHandler({UsernameAlreadyExistsException.class,
+            NotEnoughMoneyException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse usernameAlreadyExistsException(final RuntimeException e) {
         return ErrorResponse.builder()
@@ -55,5 +56,18 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
+    @ExceptionHandler(CardDoesNotWorkException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse cardDoesNotWork(final RuntimeException e) {
+        return ErrorResponse.builder()
+                .cause(e.getCause())
+                .stackTrace(Arrays.asList(e.getStackTrace()))
+                .httpStatus(HttpStatus.CONFLICT.name())
+                .userMessage(e.getMessage())
+                .message("Bad Request")
+                .suppressed(Arrays.asList(e.getSuppressed()))
+                .localizedMessage(e.getLocalizedMessage())
+                .build();
+    }
 
 }

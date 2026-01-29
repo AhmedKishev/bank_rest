@@ -1,9 +1,50 @@
-#
-# application.yml — главный конфигурационный файл Spring Boot.
+server:
+  port: 8080
 
-Что нужно сделать:
-  - Указать настройки подключения к базе данных.
-  - Указать порт приложения.
-  - Настроить параметры безопасности и JWT.
-  - Включить Swagger UI.
+spring:
+  application:
+    name: bank-cards-api
 
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bank-rest-db
+    username: postgres
+    password: bankrest
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 30000
+      maximum-pool-size: 10
+      minimum-idle: 5
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+    show-sql: false
+
+
+  liquibase:
+    enabled: true
+    change-log: classpath:db/migration/db.changelog-master.yaml
+    default-schema: public
+
+jwt:
+  secret: MEECAQAwEwYHKoZIzj0CAQYIKoZIzj0DAQcEJzAlAgEBBCAzBFJspMo0q3ihrQsSozEgLHO6EwUWQSQKhKcrHRQosA
+  time: 30m
+
+expiry:
+  years: 3
+
+logging:
+  level:
+    org.springframework.security: TRACE
+    com.example.bankcards: DEBUG
+    org.springframework.web: DEBUG

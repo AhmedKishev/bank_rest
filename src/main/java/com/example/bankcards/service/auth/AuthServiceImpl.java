@@ -2,17 +2,17 @@ package com.example.bankcards.service.auth;
 
 import com.example.bankcards.dto.jwt.JwtRequest;
 import com.example.bankcards.dto.jwt.JwtResponse;
+import com.example.bankcards.entity.User;
 import com.example.bankcards.exception.AuthTokenNotValidException;
 import com.example.bankcards.mapper.JwtMapper;
+import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.security.JwtService;
-import com.example.bankcards.security.UserDetailsServiceImpl;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,8 +20,9 @@ import org.springframework.stereotype.Service;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthServiceImpl implements AuthService {
 
+
     AuthenticationManager authenticationManager;
-    UserDetailsServiceImpl userDetailsService;
+    UserRepository userRepository;
     JwtService jwtService;
 
     @Override
@@ -31,9 +32,9 @@ public class AuthServiceImpl implements AuthService {
         } catch (BadCredentialsException e) {
             throw new AuthTokenNotValidException(String.format("Пользователя с именем %s не существует", jwtRequest.getUsername()));
         }
-        UserDetails userDetails = userDetailsService.loadUserByUsername(jwtRequest.getUsername());
+        User user = userRepository.findByUsername(jwtRequest.getUsername()).get();
 
-        String token = jwtService.createToken(userDetails);
+        String token = jwtService.createToken(user);
         return JwtMapper.toJwtResponse(token);
     }
 }

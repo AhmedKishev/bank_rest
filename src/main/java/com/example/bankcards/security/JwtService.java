@@ -8,16 +8,11 @@ import io.jsonwebtoken.security.Keys;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.time.Duration;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -26,16 +21,16 @@ public class JwtService {
     @Value("${jwt.secret}")
     String secret;
 
-    @Value("${jwt.time")
+    @Value("${jwt.time}")
     Duration lifeTime;
 
     public SecretKey getSecretKey() {
         return Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    public String createToken(UserDetails userDetails) {
+    public String createToken(User user) {
         Map<String, Object> claims = new HashMap<>();
-        User user = (User) userDetails;
+
         claims.put("userId", user.getId());
         claims.put("role", user.getRole().name());
 
@@ -57,16 +52,22 @@ public class JwtService {
     }
 
     public List<String> getRoles(String token) {
-        return getClaimsFromToken(token).get("roles", List.class);
+        Claims claims = getClaimsFromToken(token);
+
+        String role = claims.get("role", String.class);
+        if (role != null) {
+            return Collections.singletonList(role);
+        }
+        return Collections.emptyList();
     }
 
 
     private Claims getClaimsFromToken(String token) {
         return Jwts.parser()
-                .verifyWith(getSecretKey())    // <-- Проверка подписи
-                .build()                       // <-- Сборка парсера
-                .parseSignedClaims(token)      // <-- Парсинг с проверкой подписи
-                .getPayload();                 // <-- Получение claims
+                .verifyWith(getSecretKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
 }

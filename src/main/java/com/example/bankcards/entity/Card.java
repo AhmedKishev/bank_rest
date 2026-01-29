@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -18,17 +17,18 @@ import java.time.LocalDateTime;
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = "users")
+@Table(name = "cards")
 public class Card {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    Long cardId;
 
     @Column(name = "card_number", nullable = false)
     String cardNumber;
 
-    @Column(name = )
+    @Column(name = "card_number_masked", nullable = false)
+    String cardNumberMasked;
 
     @Column(name = "card_holder", nullable = false)
     String cardHolder;
@@ -40,7 +40,7 @@ public class Card {
     CardStatus status;
 
     @Column(precision = 15, scale = 2)
-    BigDecimal balance;
+    BigDecimal balance = BigDecimal.ZERO;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

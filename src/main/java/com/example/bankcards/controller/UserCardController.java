@@ -1,8 +1,7 @@
 package com.example.bankcards.controller;
 
 
-import com.example.bankcards.dto.card.CardDtoBlockRequest;
-import com.example.bankcards.dto.card.CardDtoOut;
+import com.example.bankcards.dto.card.*;
 import com.example.bankcards.service.card.admin.AdminCardService;
 import com.example.bankcards.service.card.user.UserCardService;
 import jakarta.validation.Valid;
@@ -24,10 +23,15 @@ public class UserCardController {
     AdminCardService adminCardService;
 
     @GetMapping
-    Page<CardDtoOut> getAllCardsForUser(@RequestHeader("X-USER-ID") Long userId,
-                                        @RequestParam(defaultValue = "0") int page,
-                                        @RequestParam(defaultValue = "10") int size) {
+    Page<CardDtoOutUser> getAllCardsForUser(@RequestHeader("X-USER-ID") Long userId,
+                                            @RequestParam(defaultValue = "0") int page,
+                                            @RequestParam(defaultValue = "10") int size) {
         return cardService.getAllCardsForUser(userId, page, size);
+    }
+
+    @PostMapping("/request/create")
+    public void requestCreateCard(@RequestBody @Valid CardDtoIn cardDtoIn) {
+        adminCardService.requestCreateCardForUser(cardDtoIn);
     }
 
     @PutMapping("/request/block")
@@ -37,10 +41,21 @@ public class UserCardController {
     }
 
     @GetMapping("/{cardId}")
-    public CardDtoOut getCardThroughCardId(@PathVariable Long cardId) {
-        return cardService.getCardThroughCardId(cardId);
+    public CardDtoOutUser getCardThroughCardIdForUser(@RequestHeader("X-USER-ID") Long userId,
+                                                      @PathVariable Long cardId) {
+        return cardService.getCardThroughCardId(userId, cardId);
     }
 
+    @PatchMapping("/{cartId}")
+    public CardDtoOutUser updateBalanceCard(@RequestBody @Valid RequestUpdateBalance requestUpdateBalance) {
+        return cardService.updateBalanceCard(requestUpdateBalance);
+    }
+
+    @PatchMapping
+    public void transferFromOneCardToAnother(@RequestBody @Valid RequestUpdateBalance fromCard,
+                                             @RequestBody @Valid ToCardUpdateBalanceFromAnother toCard) {
+        cardService.transferFromOneCardToAnother(fromCard, toCard);
+    }
 
 
 }

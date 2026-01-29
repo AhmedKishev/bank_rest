@@ -10,6 +10,7 @@ import com.example.bankcards.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserServiceImpl implements UserService {
 
     UserRepository userRepository;
-
+    PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
@@ -28,7 +29,9 @@ public class UserServiceImpl implements UserService {
             throw new UsernameAlreadyExistsException(String.format("Пользователь с именем: %s уже существует", userDtoIn.getUsername()));
         }
 
-        User saveUser = userRepository.save(UserMapper.toUser(userDtoIn));
+        User saveUser = UserMapper.toUser(userDtoIn);
+        saveUser.setPassword(passwordEncoder.encode(userDtoIn.getPassword()));
+        userRepository.save(saveUser);
         return UserMapper.toUserDtoOut(saveUser);
     }
 
@@ -37,6 +40,5 @@ public class UserServiceImpl implements UserService {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(String.format("Пользователя с Id %d не существует", userId)));
     }
-
 
 }

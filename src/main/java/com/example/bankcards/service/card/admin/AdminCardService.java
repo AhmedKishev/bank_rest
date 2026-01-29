@@ -11,7 +11,7 @@ public interface AdminCardService {
 
     List<CardDtoOut> getAllCards();
 
-    CardDtoOut createCardForUser(CardDtoIn cardDtoIn);
+    void createCardForUser();
 
     void blockCardForUsers();
 
@@ -19,5 +19,6 @@ public interface AdminCardService {
 
     void removeCardForUser(@Valid CardDtoBlock cardDtoBlock);
 
+    void requestCreateCardForUser(CardDtoIn cardDtoIn);
 
 }

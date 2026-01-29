@@ -2,7 +2,6 @@ package com.example.bankcards.controller;
 
 
 import com.example.bankcards.dto.card.CardDtoBlock;
-import com.example.bankcards.dto.card.CardDtoIn;
 import com.example.bankcards.dto.card.CardDtoOut;
 import com.example.bankcards.service.card.admin.AdminCardService;
 import jakarta.validation.Valid;
@@ -29,8 +28,8 @@ public class AdminController {
     }
 
     @PatchMapping("/create")
-    public CardDtoOut createCardForUser(@Valid @RequestBody CardDtoIn cardDtoIn) {
-        return cardService.createCardForUser(cardDtoIn);
+    public void createCardForUser() {
+        cardService.createCardForUser();
     }
 
     @PatchMapping("/block")

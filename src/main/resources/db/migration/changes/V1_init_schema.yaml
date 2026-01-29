@@ -1,0 +1,145 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: bank-dev
+      comment: "Создание таблицы users"
+      changes:
+        - createTable:
+            tableName: users
+            schemaName: public
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: username
+                  type: VARCHAR(50)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: email
+                  type: VARCHAR(100)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: password
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role
+                  type: VARCHAR(20)
+                  defaultValue: "USER"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: enabled
+                  type: BOOLEAN
+                  defaultValueBoolean: true
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: "CURRENT_TIMESTAMP"
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  defaultValueComputed: "CURRENT_TIMESTAMP"
+
+  - changeSet:
+      id: 2
+      author: bank-dev
+      comment: "Создание таблицы cards"
+      changes:
+        - createTable:
+            tableName: cards
+            schemaName: public
+            columns:
+              - column:
+                  name: card_id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: card_number
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: card_number_masked
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: card_holder
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: expiry_date
+                  type: DATE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: VARCHAR(20)
+                  defaultValue: "ACTIVE"
+                  constraints:
+                    nullable: false
+              - column:
+                  name: balance
+                  type: DECIMAL(15,2)
+                  defaultValueNumeric: 0.00
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: "CURRENT_TIMESTAMP"
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 3
+      author: bank-dev
+      comment: "Создание внешнего ключа для cards.user_id"
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: cards
+            baseColumnNames: user_id
+            referencedTableName: users
+            referencedColumnNames: id
+            constraintName: fk_cards_user
+
+  - changeSet:
+      id: 4
+      author: bank-dev
+      comment: "Создание административного пользователя по умолчанию (пароль: ababa)"
+      changes:
+        - sql:
+            sql: |
+              -- Создание администратора (пароль: admin123)
+              INSERT INTO users (
+                  username, 
+                  email, 
+                  password, 
+                  role, 
+                  enabled
+              ) VALUES (
+                  'admin', 
+                  'admin@bank.com', 
+                  '$2a$12$8.WJe5KL2rWNN8XeZhKqo.PLYPnIc8Z1LivwSp9l6sSIRu2GQWIKq', 
+                  'ADMIN', 
+                  true
+              )
+              ON CONFLICT (username) DO NOTHING;

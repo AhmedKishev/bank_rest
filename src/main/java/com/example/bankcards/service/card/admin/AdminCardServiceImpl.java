@@ -13,11 +13,13 @@ import com.example.bankcards.service.user.UserServiceImpl;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +35,9 @@ public class AdminCardServiceImpl implements AdminCardService {
 
     Map<Long, String> requestForBlockingCards = new HashMap<>();
 
+    List<CardDtoIn> requestsForCreateCard = new ArrayList<>();
+
+    @NonFinal
     @Value("${expiry.years}")
     Integer expiryYears;
 
@@ -44,12 +49,13 @@ public class AdminCardServiceImpl implements AdminCardService {
     }
 
     @Override
-    public CardDtoOut createCardForUser(CardDtoIn cardDtoIn) {
-        User userForWhomCard = userService.getEntityById(cardDtoIn.getUserId());
-        Card saveCard = CardMapper.toCard(userForWhomCard, cardDtoIn);
-        saveCard.setExpiryDate(LocalDate.now().plusYears(expiryYears));
-        cardRepository.save(saveCard);
-        return CardMapper.toCardDtoOut(saveCard);
+    public void createCardForUser() {
+        for (CardDtoIn cardDtoIn : requestsForCreateCard) {
+            User userForWhomCard = userService.getEntityById(cardDtoIn.getUserId());
+            Card saveCard = CardMapper.toCard(userForWhomCard, cardDtoIn);
+            saveCard.setExpiryDate(LocalDate.now().plusYears(expiryYears));
+            cardRepository.save(saveCard);
+        }
     }
 
 
@@ -81,6 +87,11 @@ public class AdminCardServiceImpl implements AdminCardService {
         Card removeCard = findByUserIdAndCardNumber(cardDtoBlock.getUserId(), cardDtoBlock.getCardNumber());
         removeCard.setStatus(CardStatus.EXPIRED);
         cardRepository.save(removeCard);
+    }
+
+    @Override
+    public void requestCreateCardForUser(CardDtoIn cardDtoIn) {
+        requestsForCreateCard.add(cardDtoIn);
     }
 
 

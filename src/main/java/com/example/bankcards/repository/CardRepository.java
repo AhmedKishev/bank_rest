@@ -11,7 +11,9 @@ public interface CardRepository extends JpaRepository<Card, Long> {
 
     Optional<Card> findByUserIdAndCardNumber(Long userId, String cardNumber);
 
-    Page<Card> findByUserId(Long userId, Pageable pageable);
+    Page<Card> findAllByUserId(Long userId, Pageable pageable);
 
+    Optional<Card> findByUserIdAndCardId(Long userId, Long cardId);
 
+    Optional<Card> findByCardNumberAndCardHolder(String cardNumber, String cardHolder);
 }
