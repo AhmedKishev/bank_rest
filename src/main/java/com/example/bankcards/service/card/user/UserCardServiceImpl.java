@@ -2,7 +2,7 @@ package com.example.bankcards.service.card.user;
 
 import com.example.bankcards.dto.card.CardDtoOutUser;
 import com.example.bankcards.dto.card.RequestUpdateBalance;
-import com.example.bankcards.dto.card.ToCardUpdateBalanceFromAnother;
+import com.example.bankcards.dto.card.TransferRequest;
 import com.example.bankcards.dto.enums.CardStatus;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.exception.CardDoesNotWorkException;
@@ -69,19 +69,26 @@ public class UserCardServiceImpl implements UserCardService {
 
     @Override
     @Transactional
-    public void transferFromOneCardToAnother(RequestUpdateBalance fromCard, ToCardUpdateBalanceFromAnother toCard) {
+    public void transferFromOneCardToAnother(TransferRequest transferRequest) {
+        Card from = getCardByCardNumberAndCardHolder(transferRequest.getCardNumberFrom(), transferRequest.getCardHolderFrom());
 
-        Card from = getCardByCardNumberAndCardHolder(fromCard.getCardNumber(), fromCard.getCardHolder());
+        if (from.getStatus() == CardStatus.BLOCKED || from.getStatus() == CardStatus.EXPIRED) {
+            throw new CardDoesNotWorkException(String.format("Карта пользователя %s не рабочая", from.getCardHolder()));
+        }
 
-        if (fromCard.getAddedAmount().compareTo(from.getBalance()) > 0) {
+        if (transferRequest.getAddedAmount().compareTo(from.getBalance()) > 0) {
             throw new NotEnoughMoneyException(String.format("В карте пользователя %s недостаточно средств для перевода", from.getCardHolder()));
         }
 
-        from.setBalance(from.getBalance().subtract(fromCard.getAddedAmount()));
+        from.setBalance(from.getBalance().subtract(transferRequest.getAddedAmount()));
 
-        Card to = getCardByCardNumberAndCardHolder(toCard.getCardNumber(), toCard.getCardHolder());
+        Card to = getCardByCardNumberAndCardHolder(transferRequest.getCardNumberTo(), transferRequest.getCardHolderTo());
 
-        to.setBalance(to.getBalance().add(fromCard.getAddedAmount()));
+        if (to.getStatus() == CardStatus.BLOCKED || to.getStatus() == CardStatus.EXPIRED) {
+            throw new CardDoesNotWorkException(String.format("Карта пользователя %s не рабочая", to.getCardHolder()));
+        }
+
+        to.setBalance(to.getBalance().add(transferRequest.getAddedAmount()));
 
         cardRepository.saveAll(List.of(from, to));
     }

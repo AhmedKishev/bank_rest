@@ -2,8 +2,7 @@ package com.example.bankcards.service.card.user;
 
 import com.example.bankcards.dto.card.CardDtoOutUser;
 import com.example.bankcards.dto.card.RequestUpdateBalance;
-import com.example.bankcards.dto.card.ToCardUpdateBalanceFromAnother;
-import jakarta.validation.Valid;
+import com.example.bankcards.dto.card.TransferRequest;
 import org.springframework.data.domain.Page;
 
 public interface UserCardService {
@@ -14,5 +13,5 @@ public interface UserCardService {
 
     CardDtoOutUser updateBalanceCard(RequestUpdateBalance requestUpdateBalance);
 
-    void transferFromOneCardToAnother(@Valid RequestUpdateBalance fromCard, @Valid ToCardUpdateBalanceFromAnother toCard);
+    void transferFromOneCardToAnother(TransferRequest transferRequest);
 }

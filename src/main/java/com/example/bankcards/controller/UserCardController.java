@@ -52,9 +52,8 @@ public class UserCardController {
     }
 
     @PatchMapping
-    public void transferFromOneCardToAnother(@RequestBody @Valid RequestUpdateBalance fromCard,
-                                             @RequestBody @Valid ToCardUpdateBalanceFromAnother toCard) {
-        cardService.transferFromOneCardToAnother(fromCard, toCard);
+    public void transferFromOneCardToAnother(@RequestBody @Valid TransferRequest transferRequest) {
+        cardService.transferFromOneCardToAnother(transferRequest);
     }
 
 

@@ -1,1 +1,487 @@
-# Здесь будет OpenAPI описание всех доступных эндпоинтов и моделей данных.
+openapi: 3.0.3
+info:
+  title: Bank Cards API
+  description: API для управления банковскими картами
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Локальный сервер
+tags:
+  - name: Authentication
+    description: Аутентификация и регистрация пользователей
+  - name: Admin
+    description: Административные операции с картами
+  - name: User Cards
+    description: Операции пользователя с картами
+
+paths:
+  /registration:
+    post:
+      tags:
+        - Authentication
+      summary: Регистрация нового пользователя
+      operationId: registrationNewUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDtoIn'
+      responses:
+        '200':
+          description: Успешная регистрация
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDtoOut'
+        '400':
+          description: Неверные данные запроса
+
+  /auth:
+    post:
+      tags:
+        - Authentication
+      summary: Аутентификация пользователя
+      operationId: createAuthToken
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JwtRequest'
+      responses:
+        '200':
+          description: Успешная аутентификация
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JwtResponse'
+        '401':
+          description: Неверные учетные данные
+
+  /api/v1/admin/cards:
+    get:
+      tags:
+        - Admin
+      summary: Получить все карты (админ)
+      operationId: getAllCards
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Список всех карт
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CardDtoOut'
+
+  /api/v1/admin/create:
+    patch:
+      tags:
+        - Admin
+      summary: Создать карту для пользователя (админ)
+      operationId: createCardForUser
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Карта создана успешно
+        '403':
+          description: Недостаточно прав
+
+  /api/v1/admin/block:
+    patch:
+      tags:
+        - Admin
+      summary: Заблокировать карты пользователей (админ)
+      operationId: blockCardForUsers
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Карты заблокированы успешно
+        '403':
+          description: Недостаточно прав
+
+  /api/v1/admin/remove:
+    patch:
+      tags:
+        - Admin
+      summary: Удалить карту пользователя (админ)
+      operationId: removeCardForUser
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CardDtoBlock'
+      responses:
+        '200':
+          description: Карта удалена успешно
+        '400':
+          description: Неверные данные запроса
+        '403':
+          description: Недостаточно прав
+
+  /api/v1/user/cards:
+    get:
+      tags:
+        - User Cards
+      summary: Получить все карты пользователя
+      operationId: getAllCardsForUser
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: X-USER-ID
+          in: header
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Список карт пользователя с пагинацией
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CardDtoOutUser'
+                  totalPages:
+                    type: integer
+                  totalElements:
+                    type: integer
+                  size:
+                    type: integer
+                  number:
+                    type: integer
+
+    patch:
+      tags:
+        - User Cards
+      summary: Перевод между картами
+      operationId: transferFromOneCardToAnother
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransferRequest'
+      responses:
+        '200':
+          description: Перевод выполнен успешно
+        '400':
+          description: Неверные данные запроса
+
+  /api/v1/user/cards/request/create:
+    post:
+      tags:
+        - User Cards
+      summary: Запрос на создание карты
+      operationId: requestCreateCard
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CardDtoIn'
+      responses:
+        '200':
+          description: Запрос на создание карты отправлен
+        '400':
+          description: Неверные данные запроса
+
+  /api/v1/user/cards/request/block:
+    put:
+      tags:
+        - User Cards
+      summary: Запрос на блокировку карты
+      operationId: requestForBlockCard
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: X-USER-ID
+          in: header
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CardDtoBlockRequest'
+      responses:
+        '200':
+          description: Запрос на блокировку карты отправлен
+        '400':
+          description: Неверные данные запроса
+
+  /api/v1/user/cards/{cardId}:
+    get:
+      tags:
+        - User Cards
+      summary: Получить карту по ID
+      operationId: getCardThroughCardIdForUser
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: X-USER-ID
+          in: header
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: cardId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Информация о карте
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardDtoOutUser'
+        '404':
+          description: Карта не найдена
+
+    patch:
+      tags:
+        - User Cards
+      summary: Обновление баланса карты
+      operationId: updateBalanceCard
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: ID карты (опечатка в коде - cartId вместо cardId)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestUpdateBalance'
+      responses:
+        '200':
+          description: Баланс обновлен успешно
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardDtoOutUser'
+        '400':
+          description: Неверные данные запроса
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    UserDtoIn:
+      type: object
+      required:
+        - username
+        - password
+        - confirmedPassword
+        - email
+      properties:
+        username:
+          type: string
+          minLength: 1
+        password:
+          type: string
+          minLength: 1
+        confirmedPassword:
+          type: string
+          minLength: 1
+        email:
+          type: string
+          format: email
+          minLength: 1
+
+    UserDtoOut:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+
+    JwtRequest:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          minLength: 1
+        password:
+          type: string
+          minLength: 1
+
+    JwtResponse:
+      type: object
+      properties:
+        token:
+          type: string
+
+    CardDtoBlock:
+      type: object
+      required:
+        - userId
+        - cardNumber
+      properties:
+        userId:
+          type: integer
+          format: int64
+        cardNumber:
+          type: string
+          minLength: 1
+
+    CardDtoBlockRequest:
+      type: object
+      required:
+        - cardNumber
+      properties:
+        cardNumber:
+          type: string
+
+    CardDtoIn:
+      type: object
+      required:
+        - userId
+        - cardHolder
+      properties:
+        userId:
+          type: integer
+          format: int64
+        cardHolder:
+          type: string
+          minLength: 1
+        initialBalance:
+          type: number
+          format: decimal
+          minimum: 0
+          default: 0
+
+    CardDtoOut:
+      type: object
+      properties:
+        userDtoOut:
+          $ref: '#/components/schemas/UserDtoOut'
+        expiryDate:
+          type: string
+          format: date
+        cardStatus:
+          $ref: '#/components/schemas/CardStatus'
+        balance:
+          type: number
+          format: decimal
+
+    CardDtoOutUser:
+      type: object
+      properties:
+        cardHolder:
+          type: string
+        expiryDate:
+          type: string
+          format: date
+        status:
+          $ref: '#/components/schemas/CardStatus'
+        balance:
+          type: number
+          format: decimal
+        cardNumberMasked:
+          type: string
+
+    RequestUpdateBalance:
+      type: object
+      required:
+        - cardNumber
+        - cardHolder
+        - addedAmount
+      properties:
+        cardNumber:
+          type: string
+          minLength: 1
+        cardHolder:
+          type: string
+          minLength: 1
+        addedAmount:
+          type: number
+          format: decimal
+          minimum: 0
+
+    TransferRequest:
+      type: object
+      required:
+        - cardNumberFrom
+        - cardHolderFrom
+        - addedAmount
+        - cardNumberTo
+        - cardHolderTo
+      properties:
+        cardNumberFrom:
+          type: string
+          minLength: 1
+        cardHolderFrom:
+          type: string
+          minLength: 1
+        addedAmount:
+          type: number
+          format: decimal
+          minimum: 0
+        cardNumberTo:
+          type: string
+          minLength: 1
+        cardHolderTo:
+          type: string
+          minLength: 1
+
+    CardStatus:
+      type: string
+      enum:
+        - ACTIVE
+        - BLOCKED
+        - EXPIRED
+
+    Role:
+      type: string
+      enum:
+        - ADMIN
+        - USER

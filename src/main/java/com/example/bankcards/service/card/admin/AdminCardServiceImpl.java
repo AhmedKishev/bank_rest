@@ -19,10 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @Service
@@ -35,7 +32,7 @@ public class AdminCardServiceImpl implements AdminCardService {
 
     Map<Long, String> requestForBlockingCards = new HashMap<>();
 
-    List<CardDtoIn> requestsForCreateCard = new ArrayList<>();
+    Set<CardDtoIn> requestsForCreateCard = new HashSet<>();
 
     @NonFinal
     @Value("${expiry.years}")
@@ -56,6 +53,7 @@ public class AdminCardServiceImpl implements AdminCardService {
             saveCard.setExpiryDate(LocalDate.now().plusYears(expiryYears));
             cardRepository.save(saveCard);
         }
+        requestsForCreateCard.clear();
     }
 
 
@@ -72,14 +70,12 @@ public class AdminCardServiceImpl implements AdminCardService {
             Long userId = entry.getKey();
             String cardNumber = entry.getValue();
 
-            Card card = cardRepository.findByUserIdAndCardNumber(userId, cardNumber)
-                    .orElseThrow(() -> new CardNotFoundException(
-                            String.format("Card %s not found for user %d", cardNumber, userId)
-                    ));
+            Card card = findByUserIdAndCardNumber(userId, cardNumber);
 
             card.setStatus(CardStatus.BLOCKED);
             cardRepository.save(card);
         }
+        requestForBlockingCards.clear();
     }
 
     @Override

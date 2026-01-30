@@ -1,13 +1,12 @@
 package com.example.bankcards.dto.user;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @Builder
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserDtoOut {

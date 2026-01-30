@@ -10,19 +10,26 @@ import java.math.BigDecimal;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@FieldDefaults(level = AccessLevel.PRIVATE)
-public class CardDtoIn {
-
-    @NotNull
-    Long userId;
+@FieldDefaults(level= AccessLevel.PRIVATE)
+public class TransferRequest {
 
     @NotBlank
-    String cardHolder;
+    String cardNumberFrom;
+
+    @NotBlank
+    String cardHolderFrom;
 
     @PositiveOrZero
-    BigDecimal initialBalance = BigDecimal.ZERO;
+    @NotNull
+    BigDecimal addedAmount;
+
+    @NotBlank
+    String cardNumberTo;
+
+    @NotBlank
+    String cardHolderTo;
 
 }
