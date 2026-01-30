@@ -9,7 +9,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.1.5</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
     </parent>
 
     <groupId>com.bank</groupId>
@@ -33,7 +33,6 @@
     </properties>
 
     <dependencies>
-        <!-- Spring Boot Starters -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -72,17 +71,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- База данных -->
-
-        <!-- Для использования MySQL вместо PostgreSQL, раскомментируйте:
-        <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        -->
-
-        <!-- JWT Authentication -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
@@ -101,20 +89,17 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Database Migrations -->
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
         </dependency>
 
-        <!-- API Documentation -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>${springdoc.version}</version>
         </dependency>
 
-        <!-- Utilities -->
         <dependency>
             <groupId>org.modelmapper</groupId>
             <artifactId>modelmapper</artifactId>
@@ -131,7 +116,6 @@
             <artifactId>commons-codec</artifactId>
         </dependency>
 
-        <!-- Lombok для сокращения boilerplate кода -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -139,13 +123,11 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Логирование -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-logging</artifactId>
         </dependency>
 
-        <!-- Тестирование -->
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
@@ -170,7 +152,6 @@
 
     <build>
         <plugins>
-            <!-- Spring Boot Maven Plugin -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -184,7 +165,6 @@
                 </configuration>
             </plugin>
 
-            <!-- Compiler Plugin для Java 17 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -202,7 +182,6 @@
                 </configuration>
             </plugin>
 
-            <!-- Surefire Plugin для тестов -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -215,7 +194,6 @@
                 </configuration>
             </plugin>
 
-            <!-- JaCoCo для покрытия кода тестами -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -236,7 +214,6 @@
                 </executions>
             </plugin>
 
-            <!-- Dependency Check Plugin для безопасности -->
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
@@ -274,7 +251,6 @@
     </build>
 
     <profiles>
-        <!-- Профиль для разработки -->
         <profile>
             <id>dev</id>
             <activation>
@@ -284,8 +260,6 @@
                 <spring.profiles.active>dev</spring.profiles.active>
             </properties>
         </profile>
-
-        <!-- Профиль для тестирования -->
         <profile>
             <id>test</id>
             <properties>
@@ -293,7 +267,6 @@
             </properties>
         </profile>
 
-        <!-- Профиль для продакшена -->
         <profile>
             <id>prod</id>
             <properties>
